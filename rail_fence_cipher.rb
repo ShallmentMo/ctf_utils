@@ -2,8 +2,8 @@
 module RailFenceCipher
   # irb(main):001:0> RailFenceCipher.encrypt("THERE IS A CIPHER")
   # => "TEESCPEHRIAIHR"
-  # irb(main):001:0> RailFenceCipher.encrypt("THERE IS A CIPHER", 3)
-  # => "TRSIEHEAPREICH"
+  # irb(main):001:0> RailFenceCipher.encrypt("THERE IS A CIPHER", 8)
+  # => "TCHIEPRHEEIRSA"
   def encrypt(plain_text, count = 2)
     chars = plain_text.delete(' ').chars
     arr = []
@@ -16,13 +16,21 @@ module RailFenceCipher
 
   # irb(main):001:0> RailFenceCipher.decrypt('TEESCPEHRIAIHR')
   # => "THEREISACIPHER"
-  # irb(main):001:0> RailFenceCipher.decrypt('TRSIEHEAPREICH', 3)
+  # irb(main):001:0> RailFenceCipher.decrypt('TCHIEPRHEEIRSA', 8)
   # => "THEREISACIPHER"
   def decrypt(cipher_text, count = 2)
     arr = Array.new(cipher_text.size)
     size = (cipher_text.size / count.to_f).ceil
     cipher_text.chars.each_with_index do |c, i|
-      arr[(i % size) * count + i / size] = c
+      loop do
+        index = (i % size) * count + i / size
+        if index < cipher_text.size && arr[index].nil?
+          arr[index] = c
+          break
+        else
+          i += 1
+        end
+      end
     end
     arr.join
   end
