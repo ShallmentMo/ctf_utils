@@ -2,20 +2,27 @@
 module RailFenceCipher
   # irb(main):001:0> RailFenceCipher.encrypt("THERE IS A CIPHER")
   # => "TEESCPEHRIAIHR"
-  def encrypt(plain_text)
+  # irb(main):001:0> RailFenceCipher.encrypt("THERE IS A CIPHER", 3)
+  # => "TRSIEHEAPREICH"
+  def encrypt(plain_text, count = 2)
     chars = plain_text.delete(' ').chars
-    (chars.select.with_index { |_, i| i.even? } +
-      chars.select.with_index { |_, i| i.odd? }).join
+    arr = []
+    (0..(count - 1)).each do |mod|
+      arr.concat(chars.select.with_index { |_, i| i % count == mod })
+    end
+    arr.join
   end
   module_function :encrypt
 
   # irb(main):001:0> RailFenceCipher.decrypt('TEESCPEHRIAIHR')
-  # => "TEIEASICHPREHR"
-  def decrypt(cipher_text)
+  # => "THEREISACIPHER"
+  # irb(main):001:0> RailFenceCipher.decrypt('TRSIEHEAPREICH', 3)
+  # => "THEREISACIPHER"
+  def decrypt(cipher_text, count = 2)
     arr = Array.new(cipher_text.size)
-    half_size = (cipher_text.size / 2.0).ceil
+    size = (cipher_text.size / count.to_f).ceil
     cipher_text.chars.each_with_index do |c, i|
-      arr[i < half_size ? i * 2 : (i - half_size) * 2 + 1] = c
+      arr[(i % size) * count + i / size] = c
     end
     arr.join
   end
